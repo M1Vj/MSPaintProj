@@ -2,7 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!-- Background color -->
-    <SolidColorBrush x:Key="BackgroundColor">#FFFFFF</SolidColorBrush>
+    <SolidColorBrush x:Key="BackgroundColor">#F2F0F8</SolidColorBrush>
+    <SolidColorBrush x:Key="MenuBackgroundColor">#F6F8FE</SolidColorBrush>
+    <SolidColorBrush x:Key="TextColor">Gray</SolidColorBrush>
 
     <!-- InkCanvas -->
     <Style x:Key="InkCanvasStyle" TargetType="InkCanvas">
@@ -67,7 +69,6 @@
                             CornerRadius="5">
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center"
                                     Margin="{TemplateBinding Padding}">
-                            <!-- Supply your icon via the Tag property -->
                             <Image Source="{TemplateBinding Tag}" Width="24" Height="24" Margin="0,0,0,5"/>
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </StackPanel>
@@ -86,11 +87,16 @@
     </Style>
 
     <!-- Toggle Button Style for Tool Buttons -->
-    <Style x:Key="ToolToggleButtonStyle" TargetType="ToggleButton">
+    <Style x:Key="SymbolToggleButtonStyle" TargetType="ToggleButton">
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderBrush" Value="Gray"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="Padding" Value="5"/>
+        <Setter Property="Foreground" Value="#212125"/>
+        <Setter Property="FontFamily" Value="Segoe UI Symbol"/>
+        <Setter Property="FontSize" Value="25"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontWeight" Value="Thin"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="10"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -99,19 +105,25 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="3">
-                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                    Margin="{TemplateBinding Padding}">
-                            <Image Source="{TemplateBinding Tag}" Width="20" Height="20" Margin="0,0,0,5"/>
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </StackPanel>
+                            CornerRadius="5" Padding="{TemplateBinding Padding}" >
+                        <ContentPresenter
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Margin="{TemplateBinding Margin}"        
+                            TextElement.FontSize="{TemplateBinding FontSize}"
+                            TextElement.FontFamily="{TemplateBinding FontFamily}"
+                            TextElement.Foreground="{TemplateBinding Foreground}"
+                            RecognizesAccessKey="True"
+                            TextElement.FontWeight="{TemplateBinding FontWeight}"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="#555"/>
+                            <Setter TargetName="Border" Property="Background" Value="Transparent"/>
+                            <Setter TargetName="Border" Property="BorderBrush" Value="Purple"/>
+                            <Setter TargetName="Border" Property="BorderThickness" Value="1"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="#333"/>
+                            <Setter TargetName="Border" Property="Background" Value="LightGray"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Border" Property="Opacity" Value="0.5"/>
@@ -122,11 +134,10 @@
         </Setter>
     </Style>
 
-    <!-- TextBlock Style for Labels -->
     <Style x:Key="TextBlockStyle" TargetType="TextBlock">
-        <Setter Property="Foreground" Value="Black"/>
-        <Setter Property="FontSize" Value="11"/>
-        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="Normal"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="Margin" Value="5"/>
@@ -137,35 +148,41 @@
         <Setter Property="Cursor" Value="Arrow"/>
     </Style>
 
-    <!-- segoe UI Symbol Button Style -->
     <Style x:Key="SymbolButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Foreground" Value="Black"/>
+        <Setter Property="Foreground" Value="#212125"/>
         <Setter Property="FontFamily" Value="Segoe UI Symbol"/>
-        <Setter Property="FontSize" Value="40"/>
+        <Setter Property="FontSize" Value="25"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Padding" Value="5"/>
+        <Setter Property="FontWeight" Value="Thin"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="10"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="Border"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="5">
-                        <ContentPresenter 
-                                      <Setter Property="FontSize" Value="{TemplateBinding FontSize}"/>
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5" Padding="{TemplateBinding Padding}" >
+                        <ContentPresenter
                             HorizontalAlignment="Center"
-                                      VerticalAlignment="Center"/>
+                            VerticalAlignment="Center"
+                            Margin="{TemplateBinding Margin}"        
+                            TextElement.FontSize="{TemplateBinding FontSize}"
+                            TextElement.FontFamily="{TemplateBinding FontFamily}"
+                            TextElement.Foreground="{TemplateBinding Foreground}"
+                            RecognizesAccessKey="True"
+                            TextElement.FontWeight="{TemplateBinding FontWeight}"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="#444"/>
+                            <Setter TargetName="Border" Property="Background" Value="#EBEBEB"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="#222"/>
+                            <Setter TargetName="Border" Property="Background" Value="#CFCFCF"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -173,5 +190,57 @@
         </Setter>
     </Style>
 
-
+    <Style x:Key="ColorButtonStyle" TargetType="Button">
+        <Setter Property="Width" Value="24"/>
+        <Setter Property="Height" Value="24"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="Transparent"/>
+        <Setter Property="FontFamily" Value="Segoe UI Symbol"/>
+        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontWeight" Value="Thin"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Panel.ZIndex" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="circle"
+                        Width="{TemplateBinding Width}"
+                        Height="{TemplateBinding Height}"
+                        CornerRadius="25"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                TextElement.FontSize="{TemplateBinding FontSize}"
+                                TextElement.FontFamily="{TemplateBinding FontFamily}"
+                                TextElement.Foreground="{TemplateBinding Foreground}"
+                                RecognizesAccessKey="True"
+                                TextElement.FontWeight="{TemplateBinding FontWeight}">
+                                <ContentPresenter.Effect>
+                                    <DropShadowEffect Color="Gray" BlurRadius="1" ShadowDepth="0" Opacity="5"/>
+                                </ContentPresenter.Effect>
+                        </ContentPresenter>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="circle" Property="Background" Value="LightGray"/>
+                            <Setter TargetName="circle" Property="BorderThickness" Value="2"/>
+                            <Setter Property="Panel.ZIndex" Value="100"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="False">
+                            <Setter Property="Panel.ZIndex" Value="0"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="circle" Property="Background" Value="Transparent"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
