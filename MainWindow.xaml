@@ -4,17 +4,49 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Paint" MinHeight="450" MinWidth="800"
+        Title="Paint" 
+        Height="450" Width="820"
+        MinHeight="450" MinWidth="820"
         Background="{DynamicResource BackgroundColor}"
-        Icon="/Assets/icon.png" >
+        Icon="/Assets/icon.png"
+        PreviewMouseWheel="OnMouseWheelZoom">
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
             <RowDefinition Height="100"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
-        <Grid Background="{DynamicResource MenuBackgroundColor}">
+        <Border Grid.Row="1" Background="LightGray" Height="2" Margin="0,-101,0,0" />
+        <Grid Margin="0,0,0,1" Grid.Row="0" Background="{DynamicResource MenuBackgroundColor}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="35"/>
+                <ColumnDefinition Width="35"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="File" Style="{StaticResource TextButtonStyle}"/>
+            <Button Grid.Column="1" Content="Edit" Style="{StaticResource TextButtonStyle}"/>
+            <Button Grid.Column="2" Content="View" Style="{StaticResource TextButtonStyle}"/>
+            <Border Grid.Column="3" Width="1" Background="LightGray" Margin="4,4"/>
+            <Button Grid.Column="4" Style="{StaticResource SymbolButtonStyle}" Content="&#xE74E;" ToolTip="Save" Margin="5,0,5,0" FontSize="15"/>
+            <Border Grid.Column="5" Width="1" Background="LightGray" Margin="4,4"/>
+            <Button Grid.Column="6" Style="{StaticResource SymbolButtonStyle}" Content="&#xE72D;" ToolTip="Share" Margin="5,0,5,0" FontSize="15"/>
+            <Border Grid.Column="7" Width="1" Background="LightGray" Margin="4,4"/>
+            <Button Grid.Column="8" Content="&#xe7a7;"  Style="{StaticResource SymbolButtonStyle}" Command="ApplicationCommands.Undo" ToolTip="Undo" Margin="0,0,0,0" FontSize="15"/>
+            <Button Grid.Column="9" Content="&#xe7a6;" Style="{StaticResource SymbolButtonStyle}" Command="ApplicationCommands.Redo" ToolTip="Redo" Margin="0,0,0,0" FontSize="15"/>
+        </Grid>
+
+        <Grid Grid.Row="1" Background="{DynamicResource MenuBackgroundColor}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="70"/>
                 <ColumnDefinition Width="70"/>
@@ -107,8 +139,8 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <ToggleButton Grid.Row="0" x:Name="Color1" Content="&#xe218;" Style="{DynamicResource SymbolToggleButtonStyle}" FontSize="15"/>
-                        <ToggleButton Grid.Row="1" x:Name="Color2" Content="&#xe218;" Style="{DynamicResource SymbolToggleButtonStyle}" FontSize="15"/>
+                        <ToggleButton Grid.Row="0" x:Name="Color1" Content="&#xEA3B;" Style="{DynamicResource SymbolToggleButtonStyle}" FontSize="25" Margin="5,0,5,0"/>
+                        <ToggleButton Grid.Row="1" x:Name="Color2" Content="&#xEA3B;" Style="{DynamicResource SymbolToggleButtonStyle}" FontSize="25" Margin="5,0,5,0"/>
                     </Grid>
                     <Grid Grid.Column="1" >
                         <Grid.RowDefinitions>
@@ -161,6 +193,7 @@
                         <Button Grid.Row="2" Grid.Column="8"  x:Name="ColorHistory9" Content="&#xe218;" Foreground="White" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" IsEnabled="False"/>
                         <Button Grid.Row="2" Grid.Column="9" x:Name="ColorHistory10" Content="&#xe218;" Foreground="White" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" IsEnabled="False"/>
                     </Grid>
+                    <Button Grid.Column="2" x:Name="ColorPickerButton" Style="{StaticResource SymbolButtonStyle}" FontSize="20" Content="&#xE790;" ToolTip="MoreColors" Margin="7,12,7,12"/>
                 </Grid>
                 <TextBlock VerticalAlignment="Bottom"  Grid.Row="2" Text="Colors" Style="{DynamicResource TextBlockStyle}" HorizontalAlignment="Center" />
             </Grid>
@@ -174,7 +207,101 @@
                 <TextBlock VerticalAlignment="Bottom"  Grid.Row="2" Text="Layers" Style="{DynamicResource TextBlockStyle}" HorizontalAlignment="Center" />
             </Grid>
         </Grid>
-        <Border Grid.Row="0" Background="LightGray" Height="2" Margin="0,99,0,0" />
-        <InkCanvas Grid.Row="1" Style="{DynamicResource InkCanvasStyle}"/>
+        <Grid Grid.Row="2" Background="{DynamicResource MenuBackgroundColor}"/>
+        <Border Grid.Row="1" Background="LightGray" Height="2" Margin="0,99,0,0" />
+        <ScrollViewer Grid.Row="2"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="{DynamicResource MenuBackgroundColor}">
+            <Canvas x:Name="ContainerCanvas"
+                  RenderTransformOrigin="0.5,0.5"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center">
+                <Canvas.RenderTransform>
+                    <ScaleTransform
+                    ScaleX="{Binding Value, ElementName=ZoomSlider}"
+                    ScaleY="{Binding Value, ElementName=ZoomSlider}" />
+                </Canvas.RenderTransform>
+                <Border x:Name="CanvasHost"
+                    Canvas.Left="0" Canvas.Top="0"
+                    Background="White"
+                    Width="800" Height="600"
+                    ClipToBounds="True">
+                    <InkCanvas x:Name="inkCanvas"
+                    Background="Transparent"
+                    Width="{Binding ActualWidth, ElementName=CanvasHost}"
+                    Height="{Binding ActualHeight, ElementName=CanvasHost}"
+                    Style="{DynamicResource InkCanvasStyle}" />
+                </Border>
+                <Thumb x:Name="Thumb_TopLeft"
+                   Style="{StaticResource ResizeThumbStyle}"
+                   Cursor="SizeNWSE"
+                           DragCompleted="ResizeThumb_DragCompleted"
+                   DragDelta="ResizeThumb_DragDelta"
+                   HorizontalAlignment="Left" VerticalAlignment="Top"
+                   Margin="-4,-4,0,0"/>
+                <Thumb x:Name="Thumb_TopRight"
+                   Style="{StaticResource ResizeThumbStyle}"
+                   Cursor="SizeNESW"
+                   DragDelta="ResizeThumb_DragDelta"
+                       DragCompleted="ResizeThumb_DragCompleted"
+                   HorizontalAlignment="Right" VerticalAlignment="Top"
+                   Margin="0,-4,-4,0"/>
+                <Thumb x:Name="Thumb_BottomRight"
+                   Style="{StaticResource ResizeThumbStyle}"
+                   Cursor="SizeNWSE"
+                   DragDelta="ResizeThumb_DragDelta"
+                       DragCompleted="ResizeThumb_DragCompleted"
+                   HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                   Margin="0,0,-4,-4"/>
+                <Thumb x:Name="Thumb_BottomLeft"
+                   Style="{StaticResource ResizeThumbStyle}"
+                   Cursor="SizeNESW"
+                   DragDelta="ResizeThumb_DragDelta"
+                       DragCompleted="ResizeThumb_DragCompleted"
+                   HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                   Margin="-4,0,0,-4"/>
+
+                <Thumb x:Name="Thumb_Top"
+                   Style="{StaticResource ResizeThumbStyle}"
+                   Cursor="SizeNS"
+                   DragDelta="ResizeThumb_DragDelta"
+                       DragCompleted="ResizeThumb_DragCompleted"
+                   HorizontalAlignment="Center" VerticalAlignment="Top"
+                   Margin="0,-4,0,0"/>
+                <Thumb x:Name="Thumb_Bottom"
+                    Style="{StaticResource ResizeThumbStyle}"
+                    Cursor="SizeNS"
+                    DragDelta="ResizeThumb_DragDelta"
+                       DragCompleted="ResizeThumb_DragCompleted"
+                    HorizontalAlignment="Center" VerticalAlignment="Bottom"
+                    Margin="0,0,0,-4"/>
+                <Thumb x:Name="Thumb_Left"
+                   Style="{StaticResource ResizeThumbStyle}"
+                   Cursor="SizeWE"
+                   DragDelta="ResizeThumb_DragDelta"
+                       DragCompleted="ResizeThumb_DragCompleted"
+                   HorizontalAlignment="Left" VerticalAlignment="Center"
+                   Margin="-4,0,0,0"/>
+                <Thumb x:Name="Thumb_Right"
+                   Style="{StaticResource ResizeThumbStyle}"
+                   Cursor="SizeWE"
+                   DragDelta="ResizeThumb_DragDelta"
+                       DragCompleted="ResizeThumb_DragCompleted"
+                   HorizontalAlignment="Right" VerticalAlignment="Center"
+                   Margin="0,0,-4,0"/>
+            </Canvas>
+        </ScrollViewer>
+
+        <Slider x:Name="ZoomSlider"
+        Grid.Row="3"
+        HorizontalAlignment="Stretch"
+        Margin="10,0,10,0"
+        VerticalAlignment="Center"
+        Minimum="0.1" Maximum="5" Value="1"
+        TickFrequency="0.1"
+        LargeChange="0.5"
+        SmallChange="0.1"
+        Style="{StaticResource ModernSliderStyle}"
+        />
+
+
     </Grid>
 </Window>

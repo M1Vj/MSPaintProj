@@ -5,6 +5,10 @@
     <SolidColorBrush x:Key="BackgroundColor">#F2F0F8</SolidColorBrush>
     <SolidColorBrush x:Key="MenuBackgroundColor">#F6F8FE</SolidColorBrush>
     <SolidColorBrush x:Key="TextColor">Gray</SolidColorBrush>
+    <SolidColorBrush x:Key="MouseHover">#EBEBEB</SolidColorBrush>
+    <SolidColorBrush x:Key="AccentColorBrush" Color="#FF007ACC"/>
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="#FF005A9E"/>
+
 
     <!-- InkCanvas -->
     <Style x:Key="InkCanvasStyle" TargetType="InkCanvas">
@@ -19,66 +23,49 @@
         </Setter>
     </Style>
 
-    <!-- Basic Button (Black background like MS Paint) -->
-    <Style x:Key="Buttons" TargetType="Button">
-        <Setter Property="Background" Value="Black"/>
-        <Setter Property="Foreground" Value="Transparent"/>
-        <Setter Property="BorderBrush" Value="Transparent"/>
-        <Setter Property="BorderThickness" Value="0"/>
+    <!-- Text Button Style -->
+    <Style x:Key="TextButtonStyle" TargetType="Button">
+        <Setter Property="Foreground" Value="Black"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="FontWeight" Value="Normal"/>
-        <Setter Property="Cursor" Value="Hand"/>
-        <Setter Property="Padding" Value="10,5"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="Cursor" Value="Arrow"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="2.5"/>
+        <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="Border"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="5">
-                        <ContentPresenter Margin="{TemplateBinding Padding}"
-                                          HorizontalAlignment="Center"
-                                          VerticalAlignment="Center"/>
+                    Width="{TemplateBinding Width}"
+                    Height="{TemplateBinding Height}"
+                    CornerRadius="5"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    Padding="{TemplateBinding Padding}">
+                        <ContentPresenter
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            TextElement.FontSize="{TemplateBinding FontSize}"
+                            TextElement.FontFamily="{TemplateBinding FontFamily}"
+                            TextElement.Foreground="{TemplateBinding Foreground}"
+                            RecognizesAccessKey="True">
+                        </ContentPresenter>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="#444"/>
+                            <Setter TargetName="Border" Property="Background" Value="{StaticResource MouseHover}"/>
+                            <Setter TargetName="Border" Property="BorderThickness" Value="2"/>
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="#222"/>
-                        </Trigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <!-- Icon Button Style (for tools with icons like Pencil, Eraser) -->
-    <Style x:Key="IconButtonStyle" TargetType="Button" BasedOn="{StaticResource Buttons}">
-        <Setter Property="Padding" Value="5"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Border x:Name="Border"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="5">
-                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center"
-                                    Margin="{TemplateBinding Padding}">
-                            <Image Source="{TemplateBinding Tag}" Width="24" Height="24" Margin="0,0,0,5"/>
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="#444"/>
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="#222"/>
+                            <Setter Property="Foreground" Value="Gray"/>
+                            <Setter TargetName="Border" Property="Background" Value="Transparent"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -90,13 +77,13 @@
     <Style x:Key="SymbolToggleButtonStyle" TargetType="ToggleButton">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="#212125"/>
-        <Setter Property="FontFamily" Value="Segoe UI Symbol"/>
+        <Setter Property="FontFamily" Value="Segoe Fluent Icons"/>
         <Setter Property="FontSize" Value="25"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="FontWeight" Value="Thin"/>
         <Setter Property="Padding" Value="0"/>
-        <Setter Property="Margin" Value="10"/>
+        <Setter Property="Margin" Value="8"/>
         <Setter Property="Cursor" Value="Hand"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -123,7 +110,8 @@
                             <Setter TargetName="Border" Property="BorderThickness" Value="1"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Border" Property="Background" Value="LightGray"/>
+                            <Setter TargetName="Border" Property="Background" Value="{StaticResource MouseHover}"/>
+                            <Setter TargetName="Border" Property="BorderThickness" Value="2"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="Border" Property="Opacity" Value="0.5"/>
@@ -134,6 +122,7 @@
         </Setter>
     </Style>
 
+    <!-- Text Style -->
     <Style x:Key="TextBlockStyle" TargetType="TextBlock">
         <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
         <Setter Property="FontSize" Value="12"/>
@@ -148,10 +137,11 @@
         <Setter Property="Cursor" Value="Arrow"/>
     </Style>
 
+    <!-- Symbol Button Style -->
     <Style x:Key="SymbolButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="#212125"/>
-        <Setter Property="FontFamily" Value="Segoe UI Symbol"/>
+        <Setter Property="FontFamily" Value="Segoe Fluent Icons"/>
         <Setter Property="FontSize" Value="25"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
@@ -190,6 +180,7 @@
         </Setter>
     </Style>
 
+    <!-- Colors Button Style -->
     <Style x:Key="ColorButtonStyle" TargetType="Button">
         <Setter Property="Width" Value="24"/>
         <Setter Property="Height" Value="24"/>
@@ -228,7 +219,7 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="circle" Property="Background" Value="LightGray"/>
+                            <Setter TargetName="circle" Property="Background" Value="{StaticResource MouseHover}"/>
                             <Setter TargetName="circle" Property="BorderThickness" Value="2"/>
                             <Setter Property="Panel.ZIndex" Value="100"/>
                         </Trigger>
@@ -243,4 +234,128 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style x:Key="InvisibleRepeatButton" TargetType="RepeatButton">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton"/>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ModernScrollBarThumb" TargetType="Thumb">
+        <Setter Property="Width" Value="8"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="Background" Value="{DynamicResource AccentColorBrush}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Border CornerRadius="4"
+                Background="{TemplateBinding Background}"
+                Width="{TemplateBinding Width}"
+                Height="{TemplateBinding Height}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style TargetType="ScrollBar">
+        <Setter Property="Width" Value="8"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollBar">
+                    <Grid Background="Transparent">
+                        <Track x:Name="PART_Track"
+                 Orientation="{TemplateBinding Orientation}">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Style="{StaticResource InvisibleRepeatButton}"
+                            Command="ScrollBar.LineUpCommand"/>
+                            </Track.DecreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb x:Name="Thumb"
+                     Background="{StaticResource AccentColorBrush}"/>
+                            </Track.Thumb>
+
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Style="{StaticResource InvisibleRepeatButton}"
+                            Command="ScrollBar.LineDownCommand"/>
+                            </Track.IncreaseRepeatButton>
+                        </Track>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Orientation" Value="Horizontal">
+                            <Setter TargetName="Thumb" Property="Height" Value="8"/>
+                            <Setter TargetName="Thumb" Property="Width"  Value="40"/>
+                        </Trigger>
+                        <Trigger Property="Orientation" Value="Vertical">
+                            <Setter TargetName="Thumb" Property="Width"  Value="8"/>
+                            <Setter TargetName="Thumb" Property="Height" Value="40"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Thumb"
+                    Property="Background"
+                    Value="{StaticResource AccentHoverBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+
+    <Style x:Key="ModernSliderStyle" TargetType="Slider">
+        <Setter Property="Height" Value="8"/>
+        <Setter Property="Background" Value="#DDD"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Slider">
+                    <Grid>
+                        <!-- stretch the grey bar full-width -->
+                        <Border Height="8"
+                  CornerRadius="4"
+                  Background="{TemplateBinding Background}"
+                  HorizontalAlignment="Stretch"/>
+
+                        <!-- ensure the track uses all the width -->
+                        <Track x:Name="PART_Track"
+                 HorizontalAlignment="Stretch"
+                 VerticalAlignment="Center">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Style="{StaticResource InvisibleRepeatButton}"/>
+                            </Track.DecreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb Width="16" Height="16"
+                     Background="{DynamicResource AccentColorBrush}">
+                                    <Thumb.Template>
+                                        <ControlTemplate>
+                                            <Ellipse Fill="{TemplateBinding Background}"/>
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Track.Thumb>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Style="{StaticResource InvisibleRepeatButton}"/>
+                            </Track.IncreaseRepeatButton>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style x:Key="ResizeThumbStyle" TargetType="Thumb">
+        <Setter Property="Width"  Value="8"/>
+        <Setter Property="Height" Value="8"/>
+        <Setter Property="Background"     Value="LightGray"/>
+        <Setter Property="BorderBrush"    Value="DarkGray"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+
 </ResourceDictionary>
