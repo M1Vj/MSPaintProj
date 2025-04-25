@@ -16,14 +16,11 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="100"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
         <Border Grid.Row="1" Background="LightGray" Height="2" Margin="0,-101,0,0" />
-        <Grid Margin="0,0,0,1" Grid.Row="0" Background="{DynamicResource MenuBackgroundColor}">
+                <Grid Margin="0,0,0,1" Grid.Row="0" Background="{DynamicResource MenuBackgroundColor}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="50"/>
-                <ColumnDefinition Width="50"/>
-                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="10"/>
                 <ColumnDefinition Width="50"/>
                 <ColumnDefinition Width="10"/>
@@ -34,19 +31,57 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Content="File" Style="{StaticResource TextButtonStyle}"/>
-            <Button Grid.Column="1" Content="Edit" Style="{StaticResource TextButtonStyle}"/>
-            <Button Grid.Column="2" Content="View" Style="{StaticResource TextButtonStyle}"/>
+
+            
+            <Menu Grid.Column="0" VerticalAlignment="Center" Background="Transparent" Style="{StaticResource ModernMenuStyle}">
+                
+                <MenuItem Header="File" MinWidth="40">
+                    <MenuItem Header="New" Command="ApplicationCommands.New" InputGestureText="Ctrl+N"/>
+                    <MenuItem Header="Open" Command="ApplicationCommands.Open" InputGestureText="Ctrl+O"/>
+                    <MenuItem Header="Import to canvas" IsEnabled="False"/> 
+                    <MenuItem Header="Recent" IsEnabled="False"/> 
+                    <Separator/>
+                    <MenuItem Header="Save" Command="ApplicationCommands.Save" InputGestureText="Ctrl+S"/>
+                    <MenuItem Header="Save as" Command="ApplicationCommands.SaveAs"/> 
+                    <Separator/>
+                    <MenuItem Header="Print" Command="ApplicationCommands.Print"/> 
+                    <MenuItem Header="Share" IsEnabled="False"/> 
+                    <Separator/>
+                    <MenuItem Header="Set as desktop background" IsEnabled="False"/> 
+                    <MenuItem Header="Image properties" InputGestureText="Ctrl+E" IsEnabled="False"/>
+                    <Separator/>
+                    <MenuItem Header="Exit" Click="ExitMenuItem_Click"/>
+                </MenuItem>
+                <MenuItem Header="Edit" MinWidth="40">
+                    <MenuItem Header="Undo" Command="ApplicationCommands.Undo" InputGestureText="Ctrl+Z"/>
+                    <MenuItem Header="Redo" Command="ApplicationCommands.Redo" InputGestureText="Ctrl+Y"/>
+                    <Separator/>
+                    <MenuItem Header="Cut" Command="ApplicationCommands.Cut" InputGestureText="Ctrl+X"/>
+                    <MenuItem Header="Copy" Command="ApplicationCommands.Copy" InputGestureText="Ctrl+C"/>
+                    <MenuItem Header="Paste" Command="ApplicationCommands.Paste" InputGestureText="Ctrl+V"/>
+                </MenuItem>
+                <MenuItem Header="View" MinWidth="40" >
+                    <MenuItem Header="Zoom" IsEnabled="False"/>
+                    <Separator/>
+                    <MenuItem Header="Rulers" IsCheckable="True" InputGestureText="Ctrl+R"/>
+                    <MenuItem Header="Gridlines" IsCheckable="True" InputGestureText="Ctrl+G"/>
+                    <MenuItem Header="Status Bar" IsChecked="True" IsEnabled="False"/>
+                    <Separator/>
+                    <MenuItem Header="Full screen" InputGestureText="F11"/>
+                    <MenuItem Header="Thumbnail" IsCheckable="True"/>
+                </MenuItem>
+            </Menu>
+
+            <Border Grid.Column="1" Width="1" Background="LightGray" Margin="4,4"/>
+            <Button Grid.Column="2" Style="{StaticResource SymbolButtonStyle}" Content="&#xE74E;" ToolTip="Save" Margin="5,0,5,0" FontSize="15"/>
             <Border Grid.Column="3" Width="1" Background="LightGray" Margin="4,4"/>
-            <Button Grid.Column="4" Style="{StaticResource SymbolButtonStyle}" Content="&#xE74E;" ToolTip="Save" Margin="5,0,5,0" FontSize="15"/>
+            <Button Grid.Column="4" Style="{StaticResource SymbolButtonStyle}" Content="&#xE72D;" ToolTip="Share" Margin="5,0,5,0" FontSize="15"/>
             <Border Grid.Column="5" Width="1" Background="LightGray" Margin="4,4"/>
-            <Button Grid.Column="6" Style="{StaticResource SymbolButtonStyle}" Content="&#xE72D;" ToolTip="Share" Margin="5,0,5,0" FontSize="15"/>
-            <Border Grid.Column="7" Width="1" Background="LightGray" Margin="4,4"/>
-            <Button Grid.Column="8" Content="&#xe7a7;"  Style="{StaticResource SymbolButtonStyle}" Command="ApplicationCommands.Undo" ToolTip="Undo" Margin="0,0,0,0" FontSize="15"/>
-            <Button Grid.Column="9" Content="&#xe7a6;" Style="{StaticResource SymbolButtonStyle}" Command="ApplicationCommands.Redo" ToolTip="Redo" Margin="0,0,0,0" FontSize="15"/>
+            <Button Grid.Column="6" Content="&#xe7a7;"  Style="{StaticResource SymbolButtonStyle}" Command="ApplicationCommands.Undo" ToolTip="Undo" Margin="0,0,0,0" FontSize="15"/>
+            <Button Grid.Column="7" Content="&#xe7a6;" Style="{StaticResource SymbolButtonStyle}" Command="ApplicationCommands.Redo" ToolTip="Redo" Margin="0,0,0,0" FontSize="15"/>
         </Grid>
 
-        <Grid Grid.Row="1" Background="{DynamicResource MenuBackgroundColor}">
+                <Grid Grid.Row="1" Background="{DynamicResource MenuBackgroundColor}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="70"/>
                 <ColumnDefinition Width="70"/>
@@ -73,7 +108,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
-                <ToggleButton Grid.Row="0" Grid.Column="0" x:Name="Image" Content="&#xE14F;" Style="{DynamicResource SymbolToggleButtonStyle}"/>
+                <Button Grid.Row="0" Grid.Column="0" x:Name="Image" Content="&#xE14F;" Style="{DynamicResource SymbolButtonStyle}"/>
                 <TextBlock Grid.Row="1" Text="Image" Style="{DynamicResource TextBlockStyle}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             </Grid>
             <Border Grid.Column="1" Background="LightGray" Width="2" Margin="69,0,0,0"/>
@@ -98,7 +133,7 @@
                     <ToggleButton Grid.Row="0" Grid.Column="2" x:Name="Text" Content="&#xE185;" Style="{DynamicResource SymbolToggleButtonStyle}" Margin="0" FontSize="20"/>
 
                     <ToggleButton Grid.Row="1" Grid.Column="0" x:Name="Eraser" Content="&#xE75C;" FontFamily="Segoe Fluent Icons" Style="{DynamicResource SymbolToggleButtonStyle}" Margin="0" FontSize="20"/>
-                    <ToggleButton Grid.Row="1" Grid.Column="1" x:Name="Color_Picker" Content="&#xEF3C;" FontFamily="Segoe MDL2 Assets" Style="{DynamicResource SymbolToggleButtonStyle}" Margin="0" FontSize="20"/>
+                    <ToggleButton Grid.Row="1" Grid.Column="1" x:Name="ColorPicker" Content="&#xEF3C;" FontFamily="Segoe MDL2 Assets" Style="{DynamicResource SymbolToggleButtonStyle}" Margin="0" FontSize="20"/>
                     <ToggleButton Grid.Row="1" Grid.Column="2" x:Name="Magnifier" Content="&#xE12E;" Style="{DynamicResource SymbolToggleButtonStyle}" Margin="0" FontSize="20"/>
                 
                 </Grid>
@@ -119,7 +154,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
-                <ToggleButton Grid.Row="0" Grid.Column="0"  x:Name="Shape" Content="&#xf158;" FontFamily="Segoe Fluent Icons" Style="{DynamicResource SymbolToggleButtonStyle}"/>
+                <ToggleButton Grid.Row="0" Grid.Column="0"  x:Name="Shapes" Content="&#xf158;" FontFamily="Segoe Fluent Icons" Style="{DynamicResource SymbolToggleButtonStyle}"/>
                 <TextBlock VerticalAlignment="Bottom"  Grid.Row="2" Text="Shapes" Style="{DynamicResource TextBlockStyle}" HorizontalAlignment="Center" />
             </Grid>
             <Border Grid.Column="4" Background="LightGray" Width="2" Margin="69,0,0,0"/>
@@ -160,28 +195,29 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions >
-                        <Button Grid.Row="0" Grid.Column="0"  x:Name="Black" Content="&#xe218;" Foreground="Black" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8"/>
-                        <Button Grid.Row="0" Grid.Column="1" x:Name="Gray" Content="&#xe218;" Foreground="Gray" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8"/>
-                        <Button Grid.Row="0" Grid.Column="2"  x:Name="DarkRed" Content="&#xe218;" Foreground="DarkRed" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8"/>
-                        <Button Grid.Row="0" Grid.Column="3" x:Name="Red" Content="&#xe218;" Foreground="Red" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8"/>
-                        <Button Grid.Row="0" Grid.Column="4"  x:Name="Orange" Content="&#xe218;" Foreground="Orange" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8"/>
-                        <Button Grid.Row="0" Grid.Column="5" x:Name="Yellow" Content="&#xe218;" Foreground="Yellow" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8"/>
-                        <Button Grid.Row="0" Grid.Column="6"  x:Name="Green" Content="&#xe218;" Foreground="Green" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8"/>
-                        <Button Grid.Row="0" Grid.Column="7" x:Name="Turquoise" Content="&#xe218;" Foreground="Turquoise" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8"/>
-                        <Button Grid.Row="0" Grid.Column="8"  x:Name="Indigo" Content="&#xe218;" Foreground="Indigo" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8"/>
-                        <Button Grid.Row="0" Grid.Column="9" x:Name="Purple" Content="&#xe218;" Foreground="Purple" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8"/>
+                        <Button Grid.Row="0" Grid.Column="0"  x:Name="Black" Content="&#xe218;" Foreground="Black" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" Click="ColorButton_Click"/>
+                        <Button Grid.Row="0" Grid.Column="1" x:Name="Gray" Content="&#xe218;" Foreground="Gray" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" Click="ColorButton_Click"/>
+                        <Button Grid.Row="0" Grid.Column="2"  x:Name="DarkRed" Content="&#xe218;" Foreground="DarkRed" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" Click="ColorButton_Click"/>
+                        <Button Grid.Row="0" Grid.Column="3" x:Name="Red" Content="&#xe218;" Foreground="Red" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" Click="ColorButton_Click"/>
+                        <Button Grid.Row="0" Grid.Column="4"  x:Name="Orange" Content="&#xe218;" Foreground="Orange" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" Click="ColorButton_Click"/>
+                        <Button Grid.Row="0" Grid.Column="5" x:Name="Yellow" Content="&#xe218;" Foreground="Yellow" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" Click="ColorButton_Click"/>
+                        <Button Grid.Row="0" Grid.Column="6"  x:Name="Green" Content="&#xe218;" Foreground="Green" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" Click="ColorButton_Click"/>
+                        <Button Grid.Row="0" Grid.Column="7" x:Name="Turquoise" Content="&#xe218;" Foreground="Turquoise" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" Click="ColorButton_Click"/>
+                        <Button Grid.Row="0" Grid.Column="8"  x:Name="Indigo" Content="&#xe218;" Foreground="Indigo" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" Click="ColorButton_Click"/>
+                        <Button Grid.Row="0" Grid.Column="9" x:Name="Purple" Content="&#xe218;" Foreground="Purple" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" Click="ColorButton_Click"/>
 
-                        <Button Grid.Row="1" Grid.Column="0"  x:Name="White" Content="&#xe218;" Foreground="White" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8"/>
-                        <Button Grid.Row="1" Grid.Column="1" x:Name="LightGray" Content="&#xe218;" Foreground="LightGray" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8"/>
-                        <Button Grid.Row="1" Grid.Column="2"  x:Name="Brown" Content="&#xe218;" Foreground="Brown" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8"/>
-                        <Button Grid.Row="1" Grid.Column="3" x:Name="Rose" Content="&#xe218;" Foreground="MistyRose" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8"/>
-                        <Button Grid.Row="1" Grid.Column="4"  x:Name="Gold" Content="&#xe218;" Foreground="Gold" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8"/>
-                        <Button Grid.Row="1" Grid.Column="5" x:Name="LightYellow" Content="&#xe218;" Foreground="LightYellow" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8"/>
-                        <Button Grid.Row="1" Grid.Column="6"  x:Name="Lime" Content="&#xe218;" Foreground="Lime" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8"/>
-                        <Button Grid.Row="1" Grid.Column="7" x:Name="LightTurquoise" Content="&#xe218;" Foreground="SkyBlue" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8"/>
-                        <Button Grid.Row="1" Grid.Column="8"  x:Name="BlueGray" Content="&#xe218;" Foreground="SteelBlue" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8"/>
-                        <Button Grid.Row="1" Grid.Column="9" x:Name="Lavender" Content="&#xe218;" Foreground="Lavender" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8"/>
+                        <Button Grid.Row="1" Grid.Column="0"  x:Name="White" Content="&#xe218;" Foreground="White" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" Click="ColorButton_Click"/>
+                        <Button Grid.Row="1" Grid.Column="1" x:Name="LightGray" Content="&#xe218;" Foreground="LightGray" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" Click="ColorButton_Click"/>
+                        <Button Grid.Row="1" Grid.Column="2"  x:Name="Brown" Content="&#xe218;" Foreground="Brown" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" Click="ColorButton_Click"/>
+                        <Button Grid.Row="1" Grid.Column="3" x:Name="Rose" Content="&#xe218;" Foreground="MistyRose" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" Click="ColorButton_Click"/>
+                        <Button Grid.Row="1" Grid.Column="4"  x:Name="Gold" Content="&#xe218;" Foreground="Gold" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" Click="ColorButton_Click"/>
+                        <Button Grid.Row="1" Grid.Column="5" x:Name="LightYellow" Content="&#xe218;" Foreground="LightYellow" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" Click="ColorButton_Click"/>
+                        <Button Grid.Row="1" Grid.Column="6"  x:Name="Lime" Content="&#xe218;" Foreground="Lime" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" Click="ColorButton_Click"/>
+                        <Button Grid.Row="1" Grid.Column="7" x:Name="LightTurquoise" Content="&#xe218;" Foreground="SkyBlue" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" Click="ColorButton_Click"/>
+                        <Button Grid.Row="1" Grid.Column="8"  x:Name="BlueGray" Content="&#xe218;" Foreground="SteelBlue" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" Click="ColorButton_Click"/>
+                        <Button Grid.Row="1" Grid.Column="9" x:Name="Lavender" Content="&#xe218;" Foreground="Lavender" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" Click="ColorButton_Click"/>
 
+                        <!-- Color History Buttons - Keep Click handler off these for now -->
                         <Button Grid.Row="2" Grid.Column="0"  x:Name="ColorHistory1" Content="&#xe218;" Foreground="White" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" IsEnabled="False"/>
                         <Button Grid.Row="2" Grid.Column="1" x:Name="ColorHistory2" Content="&#xe218;" Foreground="White" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" IsEnabled="False"/>
                         <Button Grid.Row="2" Grid.Column="2"  x:Name="ColorHistory3" Content="&#xe218;" Foreground="White" Style="{DynamicResource ColorButtonStyle}" Margin="0" FontSize="8" IsEnabled="False"/>
@@ -209,99 +245,114 @@
         </Grid>
         <Grid Grid.Row="2" Background="{DynamicResource MenuBackgroundColor}"/>
         <Border Grid.Row="1" Background="LightGray" Height="2" Margin="0,99,0,0" />
+
+        <Border x:Name="BrushSizePanel"
+                Grid.Row="2"
+                Panel.ZIndex="1"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Background="{DynamicResource MenuBackgroundColor}"
+                BorderBrush="LightGray"
+                BorderThickness="1"
+                CornerRadius="5"
+                Margin="20,0,0,0"
+                Padding="5,10"
+                Height="200"
+                Visibility="Collapsed">
+            <Slider x:Name="BrushSizeSlider"
+                    Orientation="Vertical"
+                    Minimum="1"
+                    Maximum="100"
+                    Value="5"
+                    SmallChange="0.5"
+                    LargeChange="3"
+                    TickFrequency="3"
+                    IsSnapToTickEnabled="True"
+                    ValueChanged="BrushSizeSlider_ValueChanged"
+                    Style="{StaticResource ModernSliderStyle}"
+                    VerticalAlignment="Stretch"
+                    Margin="10,0"/>
+        </Border>
+
         <ScrollViewer Grid.Row="2"  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Background="{DynamicResource MenuBackgroundColor}">
             <Canvas x:Name="ContainerCanvas"
-                  RenderTransformOrigin="0.5,0.5"
-                  HorizontalAlignment="Center"
-                  VerticalAlignment="Center">
+                RenderTransformOrigin="0.5,0.5"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
                 <Canvas.RenderTransform>
                     <ScaleTransform
                     ScaleX="{Binding Value, ElementName=ZoomSlider}"
                     ScaleY="{Binding Value, ElementName=ZoomSlider}" />
                 </Canvas.RenderTransform>
                 <Border x:Name="CanvasHost"
-                    Canvas.Left="0" Canvas.Top="0"
+                    Canvas.Left="-150" Canvas.Top="-100"
                     Background="White"
-                    Width="800" Height="600"
+                    Width="300" Height="200"
                     ClipToBounds="True">
                     <InkCanvas x:Name="inkCanvas"
                     Background="Transparent"
                     Width="{Binding ActualWidth, ElementName=CanvasHost}"
                     Height="{Binding ActualHeight, ElementName=CanvasHost}"
-                    Style="{DynamicResource InkCanvasStyle}" />
+                    Style="{DynamicResource InkCanvasStyle}" ScrollViewer.HorizontalScrollBarVisibility="Visible" />
                 </Border>
                 <Thumb x:Name="Thumb_TopLeft"
-                   Style="{StaticResource ResizeThumbStyle}"
-                   Cursor="SizeNWSE"
-                           DragCompleted="ResizeThumb_DragCompleted"
-                   DragDelta="ResizeThumb_DragDelta"
-                   HorizontalAlignment="Left" VerticalAlignment="Top"
-                   Margin="-4,-4,0,0"/>
+                    Style="{StaticResource ResizeThumbStyle}"
+                    Cursor="SizeNWSE"
+                    DragCompleted="ResizeThumb_DragCompleted"
+                    DragDelta="ResizeThumb_DragDelta"
+                    HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Margin="-4,-4,0,0"/>
                 <Thumb x:Name="Thumb_TopRight"
-                   Style="{StaticResource ResizeThumbStyle}"
-                   Cursor="SizeNESW"
-                   DragDelta="ResizeThumb_DragDelta"
-                       DragCompleted="ResizeThumb_DragCompleted"
-                   HorizontalAlignment="Right" VerticalAlignment="Top"
-                   Margin="0,-4,-4,0"/>
+                    Style="{StaticResource ResizeThumbStyle}"
+                    Cursor="SizeNESW"
+                    DragDelta="ResizeThumb_DragDelta"
+                    DragCompleted="ResizeThumb_DragCompleted"
+                    HorizontalAlignment="Right" VerticalAlignment="Top"
+                    Margin="0,-4,-4,0"/>
                 <Thumb x:Name="Thumb_BottomRight"
-                   Style="{StaticResource ResizeThumbStyle}"
-                   Cursor="SizeNWSE"
-                   DragDelta="ResizeThumb_DragDelta"
-                       DragCompleted="ResizeThumb_DragCompleted"
-                   HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                   Margin="0,0,-4,-4"/>
+                    Style="{StaticResource ResizeThumbStyle}"
+                    Cursor="SizeNWSE"
+                    DragDelta="ResizeThumb_DragDelta"
+                    DragCompleted="ResizeThumb_DragCompleted"
+                    HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                    Margin="0,0,-4,-4"/>
                 <Thumb x:Name="Thumb_BottomLeft"
-                   Style="{StaticResource ResizeThumbStyle}"
-                   Cursor="SizeNESW"
-                   DragDelta="ResizeThumb_DragDelta"
-                       DragCompleted="ResizeThumb_DragCompleted"
-                   HorizontalAlignment="Left" VerticalAlignment="Bottom"
-                   Margin="-4,0,0,-4"/>
-
+                    Style="{StaticResource ResizeThumbStyle}"
+                    Cursor="SizeNESW"
+                    DragDelta="ResizeThumb_DragDelta"
+                    DragCompleted="ResizeThumb_DragCompleted"
+                    HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                    Margin="-4,0,0,-4"/>
                 <Thumb x:Name="Thumb_Top"
-                   Style="{StaticResource ResizeThumbStyle}"
-                   Cursor="SizeNS"
-                   DragDelta="ResizeThumb_DragDelta"
-                       DragCompleted="ResizeThumb_DragCompleted"
-                   HorizontalAlignment="Center" VerticalAlignment="Top"
-                   Margin="0,-4,0,0"/>
+                    Style="{StaticResource ResizeThumbStyle}"
+                    Cursor="SizeNS"
+                    DragDelta="ResizeThumb_DragDelta"
+                    DragCompleted="ResizeThumb_DragCompleted"
+                    HorizontalAlignment="Center" VerticalAlignment="Top"
+                    Margin="0,-4,0,0"/>
                 <Thumb x:Name="Thumb_Bottom"
                     Style="{StaticResource ResizeThumbStyle}"
                     Cursor="SizeNS"
                     DragDelta="ResizeThumb_DragDelta"
-                       DragCompleted="ResizeThumb_DragCompleted"
+                    DragCompleted="ResizeThumb_DragCompleted"
                     HorizontalAlignment="Center" VerticalAlignment="Bottom"
                     Margin="0,0,0,-4"/>
                 <Thumb x:Name="Thumb_Left"
-                   Style="{StaticResource ResizeThumbStyle}"
-                   Cursor="SizeWE"
-                   DragDelta="ResizeThumb_DragDelta"
-                       DragCompleted="ResizeThumb_DragCompleted"
-                   HorizontalAlignment="Left" VerticalAlignment="Center"
-                   Margin="-4,0,0,0"/>
+                    Style="{StaticResource ResizeThumbStyle}"
+                    Cursor="SizeWE"
+                    DragDelta="ResizeThumb_DragDelta"
+                    DragCompleted="ResizeThumb_DragCompleted"
+                    HorizontalAlignment="Left" VerticalAlignment="Center"
+                    Margin="-4,0,0,0"/>
                 <Thumb x:Name="Thumb_Right"
-                   Style="{StaticResource ResizeThumbStyle}"
-                   Cursor="SizeWE"
-                   DragDelta="ResizeThumb_DragDelta"
-                       DragCompleted="ResizeThumb_DragCompleted"
-                   HorizontalAlignment="Right" VerticalAlignment="Center"
-                   Margin="0,0,-4,0"/>
+                    Style="{StaticResource ResizeThumbStyle}"
+                    Cursor="SizeWE"
+                    DragDelta="ResizeThumb_DragDelta"
+                    DragCompleted="ResizeThumb_DragCompleted"
+                    HorizontalAlignment="Right" VerticalAlignment="Center"
+                    Margin="0,0,-4,0"/>
             </Canvas>
         </ScrollViewer>
-
-        <Slider x:Name="ZoomSlider"
-        Grid.Row="3"
-        HorizontalAlignment="Stretch"
-        Margin="10,0,10,0"
-        VerticalAlignment="Center"
-        Minimum="0.1" Maximum="5" Value="1"
-        TickFrequency="0.1"
-        LargeChange="0.5"
-        SmallChange="0.1"
-        Style="{StaticResource ModernSliderStyle}"
-        />
-
 
     </Grid>
 </Window>

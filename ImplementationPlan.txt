@@ -1,0 +1,339 @@
+MSPaint Project Implementation Plan
+
+This plan outlines the features to be implemented, ordered roughly from easiest to hardest, along with the necessary C# functions in MainWindow.xaml.cs.
+
+**Phase 1: Basic UI Interaction & State Management**
+
+1.  **Status Bar Toggle (View Menu)**
+    *   XAML: `MenuItem Header="Status Bar" IsCheckable="True" IsChecked="True"` (Need `Click` handler or Command)
+    *   C#:
+        *   `StatusBarMenuItem_Click(object sender, RoutedEventArgs e)`: Toggle visibility of the status bar element (Grid Row 3). Need to name the Grid Row (e.g., `x:Name="StatusBarGrid"`).
+- Implemented but turned off since does not work properly.
+
+2.  **Exit Application (File Menu)**
+    *   XAML: `MenuItem Header="Exit"` (Need `Click` handler or Command)
+    *   C#:
+        *   `ExitMenuItem_Click(object sender, RoutedEventArgs e)`: Call `Application.Current.Shutdown()`.
+- DONE
+
+3.  **Zoom Slider & Mouse Wheel Zoom**
+    *   XAML: `Slider x:Name="ZoomSlider"`, `PreviewMouseWheel="OnMouseWheelZoom"`
+    *   C#:
+        *   `OnMouseWheelZoom(object sender, MouseWheelEventArgs e)`: (Already implemented) Adjusts `ZoomSlider.Value`.
+        *   *(No additional code needed for the slider itself as its value is bound in XAML to the ScaleTransform)*
+- 
+
+4.  **Undo/Redo (Buttons & Edit Menu)**
+    *   XAML: `Button Command="ApplicationCommands.Undo"`, `Button Command="ApplicationCommands.Redo"`, `MenuItem Command="ApplicationCommands.Undo"`, `MenuItem Command="ApplicationCommands.Redo"`
+    *   C#:
+        *   *(Leverages built-in InkCanvas Undo/Redo.)*
+        *   Add `CommandBinding`s for `ApplicationCommands.Undo` and `ApplicationCommands.Redo` in `MainWindow` constructor or XAML.
+        *   `CanExecuteUndo(object sender, CanExecuteRoutedEventArgs e)`: Set `e.CanExecute = inkCanvas.CanUndo;`
+        *   `ExecuteUndo(object sender, ExecutedRoutedEventArgs e)`: Call `inkCanvas.Undo();`
+        *   `CanExecuteRedo(object sender, CanExecuteRoutedEventArgs e)`: Set `e.CanExecute = inkCanvas.CanRedo;`
+        *   `ExecuteRedo(object sender, ExecutedRoutedEventArgs e)`: Call `inkCanvas.Redo();`
+
+5.  **Color Selection (Color Buttons & Color1/Color2 Toggles)**
+    *   XAML: `Button x:Name="Black"`, `Button x:Name="Gray"`, etc. `ToggleButton x:Name="Color1"`, `ToggleButton x:Name="Color2"` (Need `Click` handlers for buttons, potentially `Checked`/`Unchecked` for toggles)
+    *   C#:
+        *   Need member variables: `private Color primaryColor = Colors.Black;`, `private Color secondaryColor = Colors.White;`
+        *   `ColorButton_Click(object sender, RoutedEventArgs e)`:
+            *   Get the `SolidColorBrush` from the clicked button's `Foreground`.
+            *   Get the `Color` from the brush.
+            *   If `Color1.IsChecked == true`:
+                *   `primaryColor = color;`
+                *   `Color1.Foreground = new SolidColorBrush(primaryColor);` // Update toggle button visual
+                *   `inkCanvas.DefaultDrawingAttributes.Color = primaryColor;`
+            *   Else (`Color2.IsChecked == true`):
+                *   `secondaryColor = color;`
+                *   `Color2.Foreground = new SolidColorBrush(secondaryColor);` // Update toggle button visual
+        *   `Color1_Checked(object sender, RoutedEventArgs e)`:
+            *   If `Color1` is checked by user interaction, uncheck `Color2`.
+            *   `Color2.IsChecked = false;`
+            *   `inkCanvas.DefaultDrawingAttributes.Color = primaryColor;`
+        *   `Color2_Checked(object sender, RoutedEventArgs e)`:
+            *   If `Color2` is checked by user interaction, uncheck `Color1`.
+            *   `Color1.IsChecked = false;`
+            *   // Secondary color typically used for Eraser background or Fill tool secondary action - doesn't directly set InkCanvas default color.
+        *   Initialize `Color1.IsChecked = true;` and button foregrounds in constructor.
+
+6.  **Tool Selection (ToggleButtons: Pencil, Eraser, etc.)**
+    *   XAML: `ToggleButton x:Name="Pencil"`, `ToggleButton x:Name="Eraser"`, etc. (Need `Checked` handlers and potentially a common group name)
+    *   C#:
+        *   Need member variable: `private string currentTool = "Pencil";`
+        *   Create a method `UpdateToolState(ToggleButton activatedTool)`:
+            *   Iterate through all tool ToggleButtons (e.g., put them in a List). If a button isn't the `activatedTool`, set `IsChecked = false`.
+            *   `currentTool = activatedTool.Name;`
+            *   Set `inkCanvas.EditingMode` based on `currentTool`:
+                *   Pencil, Brush: `InkCanvasEditingMode.Ink`
+                *   Eraser: `InkCanvasEditingMode.EraseByPoint` (or `EraseByStroke`)
+                *   Selection: `InkCanvasEditingMode.Select`
+                *   Fill, Text, Color Picker, Magnifier, Shape: `InkCanvasEditingMode.None` (requires custom handling via mouse events on InkCanvas)
+            *   Update `inkCanvas.UseCustomCursor` and `inkCanvas.Cursor` appropriately for tools needing custom cursors (Fill, Text, Color Picker, Magnifier, Shape).
+        *   `ToolButton_Checked(object sender, RoutedEventArgs e)`: Call `UpdateToolState(sender as ToggleButton);` for each tool button (Pencil, Eraser, Fill, Text, Color_Picker, Magnifier, Brush, Shape, Selection).
+        *   Need `MouseLeftButtonDown`, `MouseMove`, `MouseLeftButtonUp` handlers for `inkCanvas` to implement logic for tools where `EditingMode` is `None`.
+
+**Phase 2: File Operations & View Options**
+
+7.  **New Canvas (File Menu)**
+    *   XAML: `MenuItem Command="ApplicationCommands.New"`
+    *   C#:
+        *   Add `CommandBinding` for `ApplicationCommands.New`.
+        *   `CanExecuteNew(object sender, CanExecuteRoutedEventArgs e)`: Set `e.CanExecute = true;`
+        *   `ExecuteNew(object sender, ExecutedRoutedEventArgs e)`:
+            *   *(Optional: Check for unsaved changes and prompt user)*
+            *   `inkCanvas.Strokes.Clear();`
+            *   Reset canvas size/position to default (`CanvasHost.Width = 300; CanvasHost.Height = 200; Canvas.SetLeft(CanvasHost, -150); Canvas.SetTop(CanvasHost, -100);`). Force layout update if needed.
+            *   Reset zoom (`ZoomSlider.Value = 1;`).
+            *   Reset background (`CanvasHost.Background = Brushes.White;`)
+
+8.  **Save Canvas (File Menu)**
+    *   XAML: `MenuItem Command="ApplicationCommands.Save"`
+    *   C#:
+        *   Need member variable: `private string currentFilePath = null;`
+        *   Add `CommandBinding` for `ApplicationCommands.Save`.
+        *   `CanExecuteSave(object sender, CanExecuteRoutedEventArgs e)`: Set `e.CanExecute = true;` // Or check if modified
+        *   `ExecuteSave(object sender, ExecutedRoutedEventArgs e)`:
+            *   If `currentFilePath` is null or empty, call `ExecuteSaveAs(sender, e)`.
+            *   Else, call `SaveCanvasToFile(currentFilePath)`.
+
+9.  **Save Canvas As (File Menu)**
+    *   XAML: `MenuItem Command="ApplicationCommands.SaveAs"`
+    *   C#:
+        *   Add `CommandBinding` for `ApplicationCommands.SaveAs`.
+        *   `CanExecuteSaveAs(object sender, CanExecuteRoutedEventArgs e)`: Set `e.CanExecute = true;`
+        *   `ExecuteSaveAs(object sender, ExecutedRoutedEventArgs e)`:
+            *   Use `Microsoft.Win32.SaveFileDialog`.
+            *   Set filters: "PNG Image|*.png|JPEG Image|*.jpg|Bitmap Image|*.bmp|GIF Image|*.gif|Ink Serialized Format|*.isf"
+            *   If `saveFileDialog.ShowDialog() == true`:
+                *   `currentFilePath = saveFileDialog.FileName;`
+                *   Call `SaveCanvasToFile(currentFilePath)`.
+        *   `SaveCanvasToFile(string filePath)`:
+            *   Get the file extension (`System.IO.Path.GetExtension(filePath).ToLower()`).
+            *   Use `System.IO.FileStream` to create/open the file.
+            *   If extension is ".isf":
+                *   `inkCanvas.Strokes.Save(fileStream);`
+            *   Else (image formats):
+                *   Create a `RenderTargetBitmap` rendering `CanvasHost`.
+                *   Create an appropriate `BitmapEncoder` (PngBitmapEncoder, JpegBitmapEncoder, etc.).
+                *   Add the `RenderTargetBitmap` frame to the encoder.
+                *   `encoder.Save(fileStream);`
+            *   Handle potential exceptions.
+
+10. **Open Image/Canvas (File Menu)**
+    *   XAML: `MenuItem Command="ApplicationCommands.Open"`
+    *   C#:
+        *   Add `CommandBinding` for `ApplicationCommands.Open`.
+        *   `CanExecuteOpen(object sender, CanExecuteRoutedEventArgs e)`: Set `e.CanExecute = true;`
+        *   `ExecuteOpen(object sender, ExecutedRoutedEventArgs e)`:
+            *   *(Optional: Check for unsaved changes)*
+            *   Use `Microsoft.Win32.OpenFileDialog`.
+            *   Set filters similar to Save As.
+            *   If `openFileDialog.ShowDialog() == true`:
+                *   `currentFilePath = openFileDialog.FileName;`
+                *   Get the file extension.
+                *   Use `System.IO.FileStream` to open the file.
+                *   If extension is ".isf":
+                    *   `inkCanvas.Strokes = new StrokeCollection(fileStream);`
+                    *   `CanvasHost.Background = Brushes.White;` // Reset background
+                    *   *(Need to handle potential exceptions)*
+                *   Else (image formats):
+                    *   Load image using `BitmapImage`. Set `BeginInit()`, `CacheOption = BitmapCacheOption.OnLoad`, `StreamSource = fileStream`, `EndInit()`.
+                    *   `inkCanvas.Strokes.Clear();`
+                    *   Set `CanvasHost.Background` to an `ImageBrush` with the loaded `BitmapImage`.
+                    *   Resize `CanvasHost` to the image's `PixelWidth` and `PixelHeight`.
+                    *   *(Consider how drawing interacts with a background image)*
+                *   Handle potential exceptions.
+
+11. **Rulers Toggle (View Menu)**
+    *   XAML: `MenuItem Header="Rulers" IsCheckable="True"` (Need `Click` handler or Command)
+    *   C#:
+        *   Need to add Ruler elements (e.g., custom controls or simple `ItemsControl`s) to the XAML, likely outside the `ScrollViewer` but aligned with it. Name them (e.g., `HorizontalRuler`, `VerticalRuler`).
+        *   `RulersMenuItem_Click(object sender, RoutedEventArgs e)`: Toggle the `Visibility` of the Ruler elements based on `IsChecked`. Update ruler markings based on scroll position and zoom (complex).
+
+12. **Gridlines Toggle (View Menu)**
+    *   XAML: `MenuItem Header="Gridlines" IsCheckable="True"` (Need `Click` handler or Command)
+    *   C#:
+        *   Need a way to draw gridlines. Options:
+            *   A `Canvas` behind the `InkCanvas` with lines drawn in code-behind (simplest). Name it `GridlineCanvas`.
+            *   A `DrawingBrush` or `VisualBrush` set as the `InkCanvas` background (might interfere with Fill tool or background images).
+        *   `GridlinesMenuItem_Click(object sender, RoutedEventArgs e)`: Toggle the visibility of `GridlineCanvas` or apply/remove the brush. Adjust grid drawing based on zoom and canvas size.
+
+13. **Print Canvas (File Menu)**
+    *   XAML: `MenuItem Command="ApplicationCommands.Print"`
+    *   C#:
+        *   Add `CommandBinding` for `ApplicationCommands.Print`.
+        *   `CanExecutePrint(object sender, CanExecuteRoutedEventArgs e)`: Set `e.CanExecute = true;`
+        *   `ExecutePrint(object sender, ExecutedRoutedEventArgs e)`:
+            *   Use `System.Windows.Controls.PrintDialog`.
+            *   If `printDialog.ShowDialog() == true`:
+                *   Call `printDialog.PrintVisual(CanvasHost, "MSPaint Drawing");` // Print the host border which includes the InkCanvas
+
+**Phase 3: Intermediate Tools & Features**
+
+14. **Cut/Copy/Paste (Edit Menu & InkCanvas)**
+    *   XAML: `MenuItem Command="ApplicationCommands.Cut"`, `MenuItem Command="ApplicationCommands.Copy"`, `MenuItem Command="ApplicationCommands.Paste"`
+    *   C#:
+        *   Add `CommandBinding`s for `Cut`, `Copy`, `Paste`.
+        *   `CanExecuteCutCopy(object sender, CanExecuteRoutedEventArgs e)`: Set `e.CanExecute = inkCanvas.GetSelectedStrokes().Count > 0;`
+        *   `ExecuteCut(object sender, ExecutedRoutedEventArgs e)`: Call `inkCanvas.CutSelection();`
+        *   `ExecuteCopy(object sender, ExecutedRoutedEventArgs e)`: Call `inkCanvas.CopySelection();`
+        *   `CanExecutePaste(object sender, CanExecuteRoutedEventArgs e)`: Set `e.CanExecute = inkCanvas.CanPaste();`
+        *   `ExecutePaste(object sender, ExecutedRoutedEventArgs e)`: Call `inkCanvas.Paste();`
+        *   *(Ensure `Selection_Checked` sets `inkCanvas.EditingMode = InkCanvasEditingMode.Select`)*
+
+15. **Color Picker Button (More Colors)**
+    *   XAML: `Button x:Name="ColorPickerButton"` (Need `Click` handler)
+    *   C#:
+        *   `ColorPickerButton_Click(object sender, RoutedEventArgs e)`:
+            *   Use a color picker dialog (e.g., `System.Windows.Forms.ColorDialog` requires adding a reference to `System.Windows.Forms` and `System.Drawing`).
+            *   Convert `System.Drawing.Color` to `System.Windows.Media.Color`.
+            *   If a color is selected:
+                *   Simulate a click on a temporary button with the chosen color to update the active color swatch (`Color1` or `Color2`) and `primaryColor`/`secondaryColor`.
+                *   *(Optional: Add the selected color to the history row by updating the `Foreground` of one of the `ColorHistory` buttons and enabling it)*
+
+16. **Full Screen (View Menu)**
+    *   XAML: `MenuItem Header="Full screen"` (Need `Click` handler or Command)
+    *   C#:
+        *   Need member variables to store previous state: `private WindowState previousWindowState; private WindowStyle previousWindowStyle;`
+        *   `FullScreenMenuItem_Click(object sender, RoutedEventArgs e)`:
+            *   If not full screen: Store current `WindowState` and `WindowStyle`, then set `WindowStyle = WindowStyle.None; WindowState = WindowState.Maximized;`
+            *   Else: Restore `WindowStyle` and `WindowState` from stored values.
+
+17. **Image Properties (File Menu)**
+    *   XAML: `MenuItem Header="Image properties"` (Need `Click` handler or Command, set `IsEnabled=True`)
+    *   C#:
+        *   `ImagePropertiesMenuItem_Click(object sender, RoutedEventArgs e)`:
+            *   Create a simple dialog window (`Window`) to display `CanvasHost.ActualWidth` and `CanvasHost.ActualHeight`.
+            *   *(Optional: Allow editing the size in the dialog, which would then update `CanvasHost.Width` and `CanvasHost.Height` and call `CanvasHost_SizeChanged`)*
+
+**Phase 4: Advanced Tools & Interactions**
+
+18. **Fill Tool (Bucket)**
+    *   Requires `Fill_Checked` to set mode to `None`.
+    *   C#:
+        *   `inkCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)`:
+            *   Check if `currentTool == "Fill"`.
+            *   If yes:
+                *   Get click position `p = e.GetPosition(inkCanvas)`.
+                *   Render `inkCanvas` to a `WriteableBitmap`.
+                *   Get target color at `p` from the bitmap.
+                *   Get fill color (`primaryColor`).
+                *   If target != fill: Perform flood fill on the `WriteableBitmap`.
+                *   Create an `Image` element, set its `Source` to the modified `WriteableBitmap`.
+                *   Clear `inkCanvas.Strokes`.
+                *   Set `CanvasHost.Background` to an `ImageBrush` using the `WriteableBitmap`. (This replaces existing background/strokes).
+                *   *This is complex and changes the drawing model from vector (strokes) to raster.*
+
+19. **Color Picker Tool (Eyedropper)**
+    *   Requires `ColorPicker_Checked` to set mode to `None`.
+    *   C#:
+        *   `inkCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)`:
+            *   Check if `currentTool == "ColorPicker"`.
+            *   If yes:
+                *   Get click position `p = e.GetPosition(inkCanvas)`.
+                *   Render `CanvasHost` (to include background) to a `RenderTargetBitmap`.
+                *   Copy pixel data at `p` using `bitmap.CopyPixels(...)`.
+                *   Convert pixel data to a `Color`.
+                *   Update the active color (`Color1` or `Color2`) and `primaryColor`/`secondaryColor`.
+                *   Switch back to the previous tool (e.g., Pencil) by simulating a click on its ToggleButton.
+
+20. **Text Tool**
+    *   Requires `Text_Checked` to set mode to `None`.
+    *   C#:
+        *   `inkCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)`:
+            *   Check if `currentTool == "Text"`.
+            *   If yes:
+                *   Create a `TextBox` dynamically at `e.GetPosition(CanvasHost)`. Add it to `CanvasHost.Children`. Set focus.
+                *   Handle `TextBox.LostFocus` or `KeyDown` (Enter):
+                    *   Get text, font properties, color (`primaryColor`).
+                    *   Remove the `TextBox` from `CanvasHost.Children`.
+                    *   Create a `TextBlock` with the properties.
+                    *   Render the `TextBlock` to a `RenderTargetBitmap`.
+                    *   Create an `Image`, set source to bitmap, add to `CanvasHost.Children` at the correct position.
+                    *   *Again, mixes vector and raster.*
+
+21. **Shape Tool**
+    *   Requires `Shape_Checked` to set mode to `None`.
+    *   Needs a way to select the shape type (Line, Rectangle, Ellipse, etc.) - perhaps a separate panel or dropdown. Assume `selectedShapeType` variable exists.
+    *   C#:
+        *   Need variables: `private Point shapeStartPoint; private bool isDrawingShape = false;`
+        *   `inkCanvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)`:
+            *   Check if `currentTool == "Shape"`.
+            *   `shapeStartPoint = e.GetPosition(inkCanvas);`
+            *   `isDrawingShape = true;`
+            *   `inkCanvas.CaptureMouse();`
+            *   *(Optional: Add a temporary shape visual to an overlay Canvas)*
+        *   `inkCanvas_MouseMove(object sender, MouseEventArgs e)`:
+            *   If `isDrawingShape`: Update temporary visual.
+        *   `inkCanvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)`:
+            *   If `isDrawingShape`:
+                *   `isDrawingShape = false;`
+                *   `inkCanvas.ReleaseMouseCapture();`
+                *   Get `endPoint = e.GetPosition(inkCanvas)`.
+                *   Create `StylusPointCollection` based on `shapeStartPoint`, `endPoint`, and `selectedShapeType`.
+                *   Create `Stroke` with the points and `inkCanvas.DefaultDrawingAttributes`.
+                *   `inkCanvas.Strokes.Add(stroke);`
+                *   *(Optional: Remove temporary visual)*
+
+22. **Brush Tool**
+    *   Requires `Brush_Checked` to set mode to `Ink`.
+    *   Needs UI (e.g., dropdown) to select brush type/size.
+    *   C#:
+        *   `BrushSettings_Changed(...)`: (Handler for the brush selection UI)
+            *   Update `inkCanvas.DefaultDrawingAttributes` (`StylusTip`, `Width`, `Height`, `IsHighlighter`).
+
+23. **Layers**
+    *   XAML: `Button x:Name="Layers"` (Need `Click` handler)
+    *   C#:
+        *   `LayersButton_Click(object sender, RoutedEventArgs e)`: Show/hide a Layers panel (likely a separate `UserControl` or `Window`).
+        *   **Major Complexity:** Requires fundamental architectural changes. Instead of one `InkCanvas`, manage multiple `StrokeCollection`s (one per layer) and potentially multiple `InkCanvas` instances or a custom rendering solution to composite them.
+
+**Phase 5: Less Common Features**
+
+24. **Import to Canvas (File Menu)**
+    *   XAML: `MenuItem Header="Import to canvas"` (Need `Click` handler or Command, set `IsEnabled=True`)
+    *   C#:
+        *   `ImportMenuItem_Click(object sender, RoutedEventArgs e)`:
+            *   Use `OpenFileDialog` for image files.
+            *   Load `BitmapImage`.
+            *   Create an `Image` element, set `Source`.
+            *   Add the `Image` to `CanvasHost.Children` (not `inkCanvas.Strokes`).
+            *   *(Needs logic for positioning/resizing the imported image, potentially making it selectable/movable)*
+
+25. **Set as Desktop Background (File Menu)**
+    *   XAML: `MenuItem Header="Set as desktop background"` (Need `Click` handler or Command, set `IsEnabled=True`)
+    *   C#:
+        *   `SetBackgroundMenuItem_Click(object sender, RoutedEventArgs e)`:
+            *   Save the current canvas to a temporary BMP file using `SaveCanvasToFile`.
+            *   Use P/Invoke (`SystemParametersInfo` with `SPI_SETDESKWALLPAPER`) from `user32.dll`. Requires `using System.Runtime.InteropServices;`.
+
+26. **Share (Button & File Menu)**
+    *   XAML: `Button ToolTip="Share"`, `MenuItem Header="Share"` (Need `Click` handler or Command, set `IsEnabled=True`)
+    *   C#:
+        *   `Share_Click(object sender, RoutedEventArgs e)`:
+            *   Save the canvas to a temporary file.
+            *   Use Windows Share contract APIs (`DataTransferManager`) - Complex, may require WinRT interop via `Microsoft.Windows.SDK.Contracts` NuGet package.
+
+27. **Recent Files (File Menu)**
+    *   XAML: `MenuItem Header="Recent"` (Need `Click` handler or Command, set `IsEnabled=True`)
+    *   C#:
+        *   Maintain a `List<string>` of recent paths (e.g., max 10). Update on Open/Save As. Persist this list (e.g., user settings).
+        *   `RecentMenuItem_SubmenuOpened(object sender, RoutedEventArgs e)`:
+            *   Clear existing dynamic recent file `MenuItem`s.
+            *   Populate the submenu with `MenuItem`s for each path in the list. Add `Click` handlers that call `ExecuteOpen` with the specific path.
+
+28. **Thumbnail View (View Menu)**
+    *   XAML: `MenuItem Header="Thumbnail" IsCheckable="True"` (Need `Click` handler or Command)
+    *   C#:
+        *   `ThumbnailMenuItem_Click(object sender, RoutedEventArgs e)`:
+            *   Show/hide a small panel/window.
+            *   Inside, use a `Rectangle` whose `Fill` is a `VisualBrush` pointing to `CanvasHost`. Update the brush when the main canvas changes significantly (`Strokes.StrokesChanged`, `CanvasHost.SizeChanged`).
+
+**Notes:**
+
+*   Enable disabled MenuItems in XAML (`IsEnabled="True"`) as you implement them.
+*   Add necessary `using` statements (e.g., `System.Windows.Media.Imaging`, `Microsoft.Win32`, `System.IO`).
+*   Implement robust error handling (try-catch blocks) for file operations and potentially complex tool actions.
+*   Refactor common logic into helper methods.
+*   Consider using the MVVM pattern for better separation of concerns, although this plan focuses on code-behind for simplicity based on the current structure.

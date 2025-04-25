@@ -238,24 +238,19 @@
     <Style x:Key="InvisibleRepeatButton" TargetType="RepeatButton">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="RepeatButton"/>
-            </Setter.Value>
-        </Setter>
     </Style>
 
     <Style x:Key="ModernScrollBarThumb" TargetType="Thumb">
         <Setter Property="Width" Value="8"/>
-        <Setter Property="Height" Value="40"/>
+        <Setter Property="Height" Value="30"/>
         <Setter Property="Background" Value="{DynamicResource AccentColorBrush}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Thumb">
-                    <Border CornerRadius="4"
-                Background="{TemplateBinding Background}"
-                Width="{TemplateBinding Width}"
-                Height="{TemplateBinding Height}"/>
+                    <Border CornerRadius="5"
+                        Background="{TemplateBinding Background}"
+                        Width="{TemplateBinding Width}"
+                        Height="{TemplateBinding Height}"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -307,55 +302,233 @@
         </Setter>
     </Style>
 
-
-
+    <!-- Style for Vertical Slider -->
     <Style x:Key="ModernSliderStyle" TargetType="Slider">
-        <Setter Property="Height" Value="8"/>
-        <Setter Property="Background" Value="#DDD"/>
+        <Setter Property="Background" Value="LightGray"/>
+        <Setter Property="Foreground" Value="{DynamicResource AccentColorBrush}"/>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="Slider">
-                    <Grid>
-                        <!-- stretch the grey bar full-width -->
-                        <Border Height="8"
-                  CornerRadius="4"
-                  Background="{TemplateBinding Background}"
-                  HorizontalAlignment="Stretch"/>
+                <ControlTemplate x:Name="Border" TargetType="Slider">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
 
-                        <!-- ensure the track uses all the width -->
-                        <Track x:Name="PART_Track"
-                 HorizontalAlignment="Stretch"
-                 VerticalAlignment="Center">
-                            <Track.DecreaseRepeatButton>
-                                <RepeatButton Style="{StaticResource InvisibleRepeatButton}"/>
-                            </Track.DecreaseRepeatButton>
-                            <Track.Thumb>
-                                <Thumb Width="16" Height="16"
-                     Background="{DynamicResource AccentColorBrush}">
-                                    <Thumb.Template>
-                                        <ControlTemplate>
-                                            <Ellipse Fill="{TemplateBinding Background}"/>
-                                        </ControlTemplate>
-                                    </Thumb.Template>
-                                </Thumb>
-                            </Track.Thumb>
-                            <Track.IncreaseRepeatButton>
-                                <RepeatButton Style="{StaticResource InvisibleRepeatButton}"/>
-                            </Track.IncreaseRepeatButton>
-                        </Track>
-                    </Grid>
+                            <Border x:Name="TrackBackground"
+                            Grid.Row="1" Grid.Column="1"
+                            Margin="0"
+                            VerticalAlignment="Stretch"
+                            HorizontalAlignment="Center"
+                            Width="3"
+                            CornerRadius="1.5"
+                            Background="{TemplateBinding Background}"
+                            IsHitTestVisible="False"/>
+
+                            <Track x:Name="PART_Track"
+                               Grid.Row="1" Grid.Column="1"
+                               Minimum="{TemplateBinding Minimum}"
+                               Maximum="{TemplateBinding Maximum}"
+                               Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Value, Mode=TwoWay}"
+                               IsDirectionReversed="{TemplateBinding IsDirectionReversed}"
+                               Orientation="Vertical">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Style="{x:Null}" Height="0"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb x:Name="Thumb"
+                                       Height="12" Width="12"
+                                       Background="{TemplateBinding Foreground}"
+                                       BorderBrush="Gray"
+                                       BorderThickness="1"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center">
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="Thumb">
+                                                <Ellipse Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}" StrokeThickness="1"/>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                        <Thumb.Style>
+                                            <Style TargetType="Thumb">
+                                                <Setter Property="BorderBrush" Value="Gray"/>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="{StaticResource AccentHoverBrush}"/>
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Thumb.Style>
+                                    </Thumb>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Style="{x:Null}" Height="0"/>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                        </Grid>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-
     <Style x:Key="ResizeThumbStyle" TargetType="Thumb">
-        <Setter Property="Width"  Value="8"/>
-        <Setter Property="Height" Value="8"/>
-        <Setter Property="Background"     Value="LightGray"/>
-        <Setter Property="BorderBrush"    Value="DarkGray"/>
+        <Setter Property="Width"  Value="6"/>
+        <Setter Property="Height" Value="6"/>
+        <Setter Property="Background"     Value="Transparent"/>
+        <Setter Property="Foreground"    Value="Transparent"/>
+        <Setter Property="BorderBrush"    Value="Black"/>
         <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+
+    <!-- Menu Style -->
+    <Style x:Key="ModernMenuStyle" TargetType="Menu">
+        <Setter Property="Background" Value="{DynamicResource MenuBackgroundColor}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <!-- MenuItem Style -->
+    <Style TargetType="MenuItem">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="#212125"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Padding" Value="4"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="MenuItem">
+                    <Grid>
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="Icon"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto" SharedSizeGroup="InputGestureText"/>
+                                    <ColumnDefinition Width="14"/>
+                                </Grid.ColumnDefinitions>
+                                <ContentPresenter x:Name="Icon" Grid.Column="0" Margin="0" VerticalAlignment="Center" HorizontalAlignment="Center" ContentSource="Icon" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                <ContentPresenter x:Name="HeaderHost" Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True" VerticalAlignment="Center" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                <TextBlock x:Name="InputGestureText" Grid.Column="2" Text="{TemplateBinding InputGestureText}" Margin="20,0,4,0" VerticalAlignment="Center" Foreground="{StaticResource TextColor}"/>
+                                <Path x:Name="Arrow" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="4,0,0,0" Data="M 0 0 L 4 4 L 0 8 Z" Fill="{TemplateBinding Foreground}" Visibility="Collapsed"/>
+                            </Grid>
+                        </Border>
+                        <Popup x:Name="PART_Popup"
+                               Placement="Bottom"
+                               IsOpen="{TemplateBinding IsSubmenuOpen}"
+                               AllowsTransparency="True"
+                               Focusable="False"
+                               PopupAnimation="Fade">
+                            <Border x:Name="SubMenuBorder"
+                                    Background="{StaticResource MenuBackgroundColor}"
+                                    BorderBrush="#CCC"
+                                    BorderThickness="1">
+                                <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <!-- Highlight Trigger (for SubmenuItem, TopLevelItem) -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsHighlighted" Value="True"/>
+                                <Condition Property="Role" Value="SubmenuItem"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Border" Property="Background" Value="{StaticResource AccentColorBrush}"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter TargetName="InputGestureText" Property="Foreground" Value="White"/>
+                            <Setter TargetName="Arrow" Property="Fill" Value="White"/>
+                        </MultiTrigger>
+                         <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsHighlighted" Value="True"/>
+                                <Condition Property="Role" Value="TopLevelItem"/>
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Border" Property="Background" Value="{StaticResource AccentColorBrush}"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter TargetName="InputGestureText" Property="Foreground" Value="White"/>
+                            <Setter TargetName="Arrow" Property="Fill" Value="White"/>
+                        </MultiTrigger>
+
+                        <!-- Highlight Trigger (for TopLevelHeader - File, Edit, View) -->
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsHighlighted" Value="True"/>
+                                <Condition Property="Role" Value="TopLevelHeader"/>
+                            </MultiTrigger.Conditions>
+                             <Setter TargetName="Border" Property="Background" Value="{StaticResource MouseHover}"/>
+                             <Setter Property="Foreground" Value="#212125"/>
+                        </MultiTrigger>
+                        <MultiTrigger>
+                             <MultiTrigger.Conditions>
+                                <Condition Property="IsSubmenuOpen" Value="True"/>
+                                <Condition Property="Role" Value="TopLevelHeader"/>
+                            </MultiTrigger.Conditions>
+                             <Setter TargetName="Border" Property="Background" Value="{StaticResource MouseHover}"/>
+                             <Setter Property="Foreground" Value="#212125"/>
+                        </MultiTrigger>
+
+                        <!-- Disabled Trigger -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{StaticResource TextColor}"/> <!-- Use standard disabled text color -->
+                            <Setter TargetName="InputGestureText" Property="Foreground" Value="{StaticResource TextColor}"/>
+                            <Setter TargetName="Arrow" Property="Fill" Value="{StaticResource TextColor}"/>
+                        </Trigger>
+
+                        <!-- Trigger to show arrow for submenu headers -->
+                        <Trigger Property="Role" Value="SubmenuHeader">
+                            <Setter TargetName="Arrow" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+
+                        <!-- Trigger for TopLevelHeader (adjust padding, etc.) -->
+                        <Trigger Property="Role" Value="TopLevelHeader">
+                             <Setter Property="Padding" Value="0,4"/>
+                             <Setter TargetName="Border" Property="Background" Value="Transparent"/>
+                             <Setter Property="Foreground" Value="#212125"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <!-- Add specific overrides for TopLevelHeader if needed, outside the template -->
+        <Style.Triggers>
+             <Trigger Property="Role" Value="TopLevelHeader">
+                 <Setter Property="Padding" Value="0,4"/>
+                 <Setter Property="Background" Value="Transparent"/>
+                 <Setter Property="Foreground" Value="Black"/>
+                 <Setter Property="BorderThickness" Value="0"/>
+                 <Setter Property="HorizontalContentAlignment" Value="Center"/>
+             </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Add this Separator style after your MenuItem style -->
+    <Style TargetType="Separator">
+        <Setter Property="Height" Value="1"/>
+        <Setter Property="Background" Value="#E0E0E0"/>
+        <Setter Property="Margin" Value="4,4,4,4"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Separator">
+                    <Rectangle Height="{TemplateBinding Height}"
+                               Fill="{TemplateBinding Background}"
+                               Margin="{TemplateBinding Margin}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
 </ResourceDictionary>
