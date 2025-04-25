@@ -344,7 +344,7 @@
                                 </Track.DecreaseRepeatButton>
                                 <Track.Thumb>
                                     <Thumb x:Name="Thumb"
-                                       Height="12" Width="12"
+                                       Height="15" Width="15"
                                        Background="{TemplateBinding Foreground}"
                                        BorderBrush="Gray"
                                        BorderThickness="1"
